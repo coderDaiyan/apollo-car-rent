@@ -89,7 +89,15 @@ const returnACarFromBooking = async (
 };
 
 const deleteACarFromDB = async (_id: string) => {
-  const result = await Car.findOneAndDelete({ _id }, { new: true });
+  const result = await Car.findByIdAndUpdate(
+    { _id },
+    {
+      $set: {
+        isDeleted: true,
+      },
+    },
+    { new: true },
+  );
   return result;
 };
 

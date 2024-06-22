@@ -20,10 +20,16 @@ const createBookingIntoDB = async (payload: TBookingInput, token: string) => {
   }
 
   // check if car exists
-  const ifCarExists = await Car.findOne({ _id: payload.carId });
-  if (!ifCarExists) {
+  const car = await Car.findOne({ _id: payload.carId });
+  if (!car) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Car is not valid');
   }
+
+  await Car.findByIdAndUpdate(payload.carId, {
+    $set: {
+      status: 'unavailable',
+    },
+  });
 
   const newBooking = {
     date: payload.date,
@@ -38,7 +44,10 @@ const createBookingIntoDB = async (payload: TBookingInput, token: string) => {
 
 const getAllBookingsFromDB = async (query: Record<string, string>) => {
   const { carId, date } = query;
-  const result = await Booking.find({ _id: carId, date });
+  const result = await Booking.find({
+    ...(carId && { car: carId }),
+    ...(date && { date }),
+  });
   return result;
 };
 

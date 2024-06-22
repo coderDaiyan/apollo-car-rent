@@ -89,8 +89,9 @@ const returnACarFromBooking = async (
 };
 
 const deleteACarFromDB = async (_id: string) => {
+  console.log(_id);
   const result = await Car.findByIdAndUpdate(
-    { _id },
+    _id,
     {
       $set: {
         isDeleted: true,

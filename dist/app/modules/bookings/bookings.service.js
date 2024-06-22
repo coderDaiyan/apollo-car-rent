@@ -19,10 +19,15 @@ const createBookingIntoDB = async (payload, token) => {
         throw new appError_1.AppError(http_status_1.default.UNAUTHORIZED, 'User not found');
     }
     // check if car exists
-    const ifCarExists = await cars_model_1.default.findOne({ _id: payload.carId });
-    if (!ifCarExists) {
+    const car = await cars_model_1.default.findOne({ _id: payload.carId });
+    if (!car) {
         throw new appError_1.AppError(http_status_1.default.BAD_REQUEST, 'Car is not valid');
     }
+    await cars_model_1.default.findByIdAndUpdate(payload.carId, {
+        $set: {
+            status: 'unavailable',
+        },
+    });
     const newBooking = {
         date: payload.date,
         startTime: payload.startTime,
@@ -34,7 +39,10 @@ const createBookingIntoDB = async (payload, token) => {
 };
 const getAllBookingsFromDB = async (query) => {
     const { carId, date } = query;
-    const result = await bookings_model_1.default.find({ _id: carId, date });
+    const result = await bookings_model_1.default.find({
+        ...(carId && { car: carId }),
+        ...(date && { date }),
+    });
     return result;
 };
 const getMyBookingFromDB = async (token) => {

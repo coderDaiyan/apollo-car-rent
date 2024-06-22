@@ -26,6 +26,11 @@ const getACarFromDB = async (_id: string) => {
 };
 
 const updateACarFromDB = async (_id: string, payload: Partial<TCar>) => {
+  // check if car exists
+  const car = await Car.findOne({ _id });
+  if (!car) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Car is not valid');
+  }
   const result = await Car.findByIdAndUpdate(_id, payload, {
     new: true,
     runValidators: true,
@@ -89,7 +94,11 @@ const returnACarFromBooking = async (
 };
 
 const deleteACarFromDB = async (_id: string) => {
-  console.log(_id);
+  // check if car exists
+  const car = await Car.findOne({ _id });
+  if (!car) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Car is not valid');
+  }
   const result = await Car.findByIdAndUpdate(
     _id,
     {

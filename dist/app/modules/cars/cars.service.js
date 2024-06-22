@@ -25,6 +25,11 @@ const getACarFromDB = async (_id) => {
     return result;
 };
 const updateACarFromDB = async (_id, payload) => {
+    // check if car exists
+    const car = await cars_model_1.default.findOne({ _id });
+    if (!car) {
+        throw new appError_1.AppError(http_status_1.default.BAD_REQUEST, 'Car is not valid');
+    }
     const result = await cars_model_1.default.findByIdAndUpdate(_id, payload, {
         new: true,
         runValidators: true,
@@ -62,7 +67,11 @@ const returnACarFromBooking = async (payload, token) => {
     return updatedBooking;
 };
 const deleteACarFromDB = async (_id) => {
-    console.log(_id);
+    // check if car exists
+    const car = await cars_model_1.default.findOne({ _id });
+    if (!car) {
+        throw new appError_1.AppError(http_status_1.default.BAD_REQUEST, 'Car is not valid');
+    }
     const result = await cars_model_1.default.findByIdAndUpdate(_id, {
         $set: {
             isDeleted: true,

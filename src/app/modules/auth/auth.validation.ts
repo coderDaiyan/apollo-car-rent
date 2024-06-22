@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 const signInValidationSchema = z.object({
-  id: z.string({
-    required_error: 'ID is required',
+  email: z.string({
+    required_error: 'email is required',
   }),
   password: z.string({
     required_error: 'Password is required',
